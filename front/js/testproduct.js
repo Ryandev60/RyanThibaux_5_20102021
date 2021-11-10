@@ -131,4 +131,16 @@ const addProduct = (cartData, productToAdd) => {
   cartData.push(productToAdd);
 };
 
+// for (var i = 0; i < cartData.length; i++) {
+//   if (
+//     cartData[i]["id"] &&
+//     cartData[i]["color"] == cartData[i]["id"] &&
+//     cartData[i]["color"]
+//   ) {
+//     cartData["quantity"] = cartData["quantity"] + quantity.value;
+//   }
+// }
 
+// for (const elementId in cartData) {
+//   ;
+// }

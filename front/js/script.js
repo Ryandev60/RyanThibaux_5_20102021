@@ -1,4 +1,5 @@
-// DATA RECOVERY
+// RECUPERATION DES DONNEES
+
 fetch("http://localhost:3000/api/products")
   .then((response) => response.json())
   .then((response) => {
@@ -6,44 +7,50 @@ fetch("http://localhost:3000/api/products")
   })
   .catch((error) => alert("Erreur : " + error));
 
-// DISPLAY OF PRODUCTS
-function showProducts(products) {
-  for (const product of products) {
-    console.log("information du produit:");
-    console.log(product);
+// AFFICHAGE DES PRODUITS
 
-    // ARTICLE LINK
-    let productLink = document.createElement("a");
+function showProducts(products) {
+  for (const product of products) {;
+
+    // LIENS ARTICLE
+
+    const productLink = document.createElement("a");
     productLink.href = "product.html?id=" + product._id;
     document.getElementById("items").appendChild(productLink);
 
     // ARTICLE
-    let productArticle = document.createElement("article");
+
+    const productArticle = document.createElement("article");
     productLink.appendChild(productArticle);
 
     // IMAGE
-    let productImg = document.createElement("img");
+
+    const productImg = document.createElement("img");
     productImg.src = product.imageUrl;
     productImg.alt = product.name;
     productArticle.appendChild(productImg);
 
-    // TITLE
-    let productTitle = document.createElement("h3");
+    // TITRE
+
+    const productTitle = document.createElement("h3");
     productTitle.innerHTML = product.name;
     productArticle.appendChild(productTitle);
 
     // DESCRIPTION
-    let productDescription = document.createElement("p");
+
+    const productDescription = document.createElement("p");
     productArticle.appendChild(productDescription);
     productDescription.innerHTML = product.description;
 
-    // PRICE
-    let productPrice = document.createElement("p");
+    // PRIX
+
+    const productPrice = document.createElement("p");
     productArticle.appendChild(productPrice);
     productPrice.innerHTML = product.price + " €";
 
-    // BUTTON
-    let productButton = document.createElement("button");
+    // BOUTTON
+
+    const productButton = document.createElement("button");
     productArticle.appendChild(productButton);
     productButton.type = "button";
     productButton.innerHTML = "Voir l'article";
@@ -54,8 +61,9 @@ function showProducts(products) {
     productButton.style.padding = "8px 16px 8px 16px";
     productButton.style.marginBottom = "16px";
 
-    // BUTTON LINK
-    let productButtonLink = document.createElement("a");
+    // LIEN BOUTTON
+    
+    const productButtonLink = document.createElement("a");
     productArticle.appendChild(productButtonLink);
     productButtonLink.appendChild(productButton);
     productButtonLink.href = "product.html?id=" + product._id;

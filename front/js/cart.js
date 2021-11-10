@@ -1,3 +1,5 @@
+//RECUPERATION DES DONNES
+
 fetch("http://localhost:3000/api/products")
   .then((response) => response.json())
   .then((response) => {
@@ -6,138 +8,247 @@ fetch("http://localhost:3000/api/products")
   .catch((error) => alert("Erreur : " + error));
 
 function showProducts(products) {
+  const cart = JSON.parse(localStorage.getItem("cart"));
+  
+  
+
   // SECTION
-  let productSection = document.getElementById("cart__items");
-  // ARTICLE
-  let productArticle = document.createElement("article");
-  productSection.appendChild(productArticle);
-  productArticle.classList.add("cart__item");
 
-  // DIV IMG
-  let productDivImg = document.createElement("div");
-  productArticle.appendChild(productDivImg);
-  productDivImg.classList.add("cart__item__img");
+  const productSection = document.getElementById("cart__items");
+  for (const product of cart) {
+    // ARTICLE
 
-  // IMG
-  let productImg = document.createElement("img");
-  productDivImg.appendChild(productImg);
-  productImg.src = localStorage.getItem("img");
-  productImg.alt = localStorage.getItem("name");
+    const productArticle = document.createElement("article");
+    productSection.appendChild(productArticle);
+    productArticle.classList.add("cart__item");
 
-  // DIV PARENT NAME PRICE
-  let productCard = document.createElement("div");
-  productArticle.appendChild(productCard);
-  productCard.classList.add("cart__item__content");
+    // DIV IMAGE
 
-  // DIV ENFANT NAME PRICE
+    const productDivImg = document.createElement("div");
+    productArticle.appendChild(productDivImg);
+    productDivImg.classList.add("cart__item__img");
 
-  let productDivNamePrice = document.createElement("div");
-  productCard.appendChild(productDivNamePrice);
-  productDivNamePrice.classList.add("cart__item__content__titlePrice");
+    // IMAGE
 
-  // TITLE OF PRODUCT
-  let productTitle = document.createElement("h2");
-  productDivNamePrice.appendChild(productTitle);
-  productTitle.innerHTML = localStorage.getItem("name");
+    const productImg = document.createElement("img");
+    productDivImg.appendChild(productImg);
+    productImg.src = product.image;
+    productImg.alt = localStorage.getItem("name");
 
-  // PRICE
+    // DIV PARENT NOM ET PRIX DU PRODUIT
 
-  let productPrice = document.createElement("p");
-  productDivNamePrice.appendChild(productPrice);
-  productPrice.innerHTML = localStorage.getItem("price") + " €";
+    const productCard = document.createElement("div");
+    productArticle.appendChild(productCard);
+    productCard.classList.add("cart__item__content");
 
-  // DIV PARENT QUANTITE
-  let productDivNumber = document.createElement("div");
-  productSection.appendChild(productDivNumber);
-  productDivNumber.classList.add("cart__item__content__settings");
+    // DIV ENFANT NOM ET PRIX DU PRODUIT
 
-  // DIV ENFANT QUANTITE
+    const productDivNamePrice = document.createElement("div");
+    productCard.appendChild(productDivNamePrice);
+    productDivNamePrice.classList.add("cart__item__content__titlePrice");
 
-  let productDivNumberChildren = document.createElement("div");
-  productDivNumber.appendChild(productDivNumberChildren);
-  productDivNumberChildren.classList.add(
-    "cart__item__content__settings__quantity"
-  );
+    // TITRE DU PRODUIT
 
-  // AFFICHAGE QUANTITE
+    const productTitle = document.createElement("h2");
+    productDivNamePrice.appendChild(productTitle);
+    productTitle.innerHTML = product.name;
 
-  let productNumber = document.createElement("p");
-  productDivNumberChildren.appendChild(productNumber);
-  productNumber.innerHTML = "Quantité : ";
+    // PRIX
 
-  // SELECTION QUANTITE
+    const productPrice = document.createElement("p");
+    productDivNamePrice.appendChild(productPrice);
+    productPrice.innerHTML = product.price + " €";
 
-  let productSelectNumber = document.createElement("input");
-  productDivNumberChildren.appendChild(productSelectNumber);
-  productSelectNumber.classList.add("itemQuantity");
-  productSelectNumber.type = "number";
-  productSelectNumber.name = "itemQuantity";
-  productSelectNumber.min = "1";
-  productSelectNumber.max = "100";
-  productSelectNumber.value = localStorage.getItem("quantity");
+    // DIV PARENT QUANTITE
 
-  // DIV SUPPRESSION QUANTITE
+    const productDivNumber = document.createElement("div");
+    productSection.appendChild(productDivNumber);
+    productDivNumber.classList.add("cart__item__content__settings");
 
-  let productDivDelete = document.createElement("div");
-  productDivNumber.appendChild(productDivDelete);
-  productDivDelete.classList.add("cart__item__content__settings__delete");
+    // DIV ENFANT QUANTITE
 
-  // AFFICHAGE DE SUPPRESSION
+    const productDivNumberChildren = document.createElement("div");
+    productDivNumber.appendChild(productDivNumberChildren);
+    productDivNumberChildren.classList.add(
+      "cart__item__content__settings__quantity"
+    );
 
-  let productDelete = document.createElement("p");
-  productDivDelete.appendChild(productDelete);
-  productDelete.classList.add("deleteItem");
+    // AFFICHAGE QUANTITE
+
+    const productNumber = document.createElement("p");
+    productDivNumberChildren.appendChild(productNumber);
+    productNumber.innerHTML = "Quantité : ";
+
+    // SELECTION QUANTITE
+
+    const productSelectNumber = document.createElement("input");
+    productDivNumberChildren.appendChild(productSelectNumber);
+    productSelectNumber.classList.add("itemQuantity");
+    productSelectNumber.type = "number";
+    productSelectNumber.name = "itemQuantity";
+    productSelectNumber.min = "1";
+    productSelectNumber.max = "100";
+    productSelectNumber.value = product.quantity;
+
+    // DIV SUPPRESSION QUANTITE
+
+    const productDivDelete = document.createElement("div");
+    productDivNumber.appendChild(productDivDelete);
+    productDivDelete.classList.add("cart__item__content__settings__delete");
+
+    // AFFICHAGE DE SUPPRESSION
+
+    const productDelete = document.createElement("p");
+    productDivDelete.appendChild(productDelete);
+    productDelete.classList.add("deleteItem");
+    productDelete.innerHTML = "Supprimer";
+
+    let cartData = localStorage.getItem("cart");
+    console.log(cartData)
+      
+    productDelete.addEventListener("click", function() {
+      this.remove
+      console.log("hello");
+    }) 
+  }
+
+  
+    
+    
 
   // TOTAL
 
-  let productDivTotal = document.createElement("div");
+  const productDivTotal = document.createElement("div");
   productSection.appendChild(productDivTotal);
   productDivTotal.classList.add("cart__price");
 
   // AFFICHAGE TOTAL
 
-  let productTotal = document.createElement("p");
+  const testTotal = document.getElementsByClassName("itemQuantity");
+  const productTotal = document.createElement("p");
   productDivTotal.appendChild(productTotal);
+  let productTotalSpan = document.createElement("span");
+  productTotal.appendChild(productTotalSpan);
+  productTotalSpan = localStorage.getItem("quantity");
+  const productTotalSpanB = document.createElement("span");
+  productTotal.appendChild(productTotalSpanB);
+  productTotal.innerHTML = "salut";
 
-  // RECUPERATION FORMULAIRE
-  let storageFirstName = document.getElementById("firstName");
-  let storageLastName = document.getElementById("lastName");
-  let storageAddress = document.getElementById("address");
-  let storageCity = document.getElementById("city");
-  let storageEmail = document.getElementById("email");
-
-  let order = document.getElementById("order");
-  order.addEventListener("click", function () {
-    if (storageFirstName.value != "") {
-      localStorage.setItem("firstName", storageFirstName.value);
-    } else {
-      alert("Veuillez renseignez votre prénom");
-    }
-
-    if (storageLastName.value != "") {
-      localStorage.setItem("lastName", storageLastName.value);
-    } else {
-      alert("Veuillez renseignez votre nom");
-    }
-
-    if (storageAddress.value != "") {
-      localStorage.setItem("address", storageAddress.value);
-    } else {
-      alert("Veuillez renseignez votre adresse");
-    }
-
-    if (storageCity.value != "") {
-     localStorage.setItem("city", storageCity.value);
-    }
-
-    else {
-     alert("Veuillez renseigner votre ville")
-    }
-
-    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(storageEmail.value)) {
-      localStorage.setItem("email", storageEmail.value);
-    } else {
-      alert("Email invalide");
-    }
-  });
+  // BOUTTON COMMANDER 
+  const buttonDiv = document.querySelector(".cart__order__form__submit");
+  const buttonLink = document.createElement("a");
+  buttonDiv.appendChild(buttonLink);
+  buttonLink.href = "confirmation.html";
+  const button = document.getElementById("order");
 }
+// RECUPERATION DES CHAMPS DE FORMULAIRES ET DES MESSAGES D'ERREUR
+
+const storageFirstName = document.getElementById("firstName");
+const messageFirstName = document.getElementById("firstNameErrorMsg");
+const storageLastName = document.getElementById("lastName");
+const messageLastName = document.getElementById("lastNameErrorMsg");
+const storageAddress = document.getElementById("address");
+const messageAddress = document.getElementById("addressErrorMsg");
+const storageCity = document.getElementById("city");
+const messageCity = document.getElementById("cityErrorMsg");
+const storageEmail = document.getElementById("email");
+const messageEmail = document.getElementById("emailErrorMsg");
+
+// REG EXP LETTER
+
+const rejexLetter = new RegExp(
+  "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$",
+  "u"
+);
+
+// VALIDATION DU CHAMP PRENOM
+
+storageFirstName.addEventListener("change", function () {
+  validFirstName(this);
+});
+const validFirstName = function () {
+  const testFirstName = rejexLetter.test(storageFirstName.value);
+
+  if (testFirstName) {
+    messageFirstName.style.color = "green";
+    messageFirstName.innerHTML = "Prénom valide";
+    localStorage.setItem("firstName", storageFirstName.value);
+  } else {
+    messageFirstName.style.color = "red";
+    messageFirstName.innerHTML = "Prénom invalide";
+  }
+};
+// VALIDATION DU CHAMP NOM
+
+storageLastName.addEventListener("change", function () {
+  validLastName(this);
+});
+const validLastName = function (validLetter) {
+  const testLastName = rejexLetter.test(storageLastName.value);
+  if (testLastName) {
+    messageLastName.style.color = "green";
+    messageLastName.innerHTML = "Nom valide";
+    localStorage.setItem("lastName", storageLastName.value);
+  } else {
+    messageLastName.style.color = "red";
+    messageLastName.innerHTML = "Nom invalide";
+  }
+};
+
+// VALIDATION DU CHAMP VILLE
+
+storageCity.addEventListener("change", function () {
+  validCity(this);
+});
+const validCity = function (validLetter) {
+  const testCity = rejexLetter.test(storageCity.value);
+  if (testCity) {
+    messageCity.style.color = "green";
+    messageCity.innerHTML = "Nom de ville valide";
+    localStorage.setItem("city", storageCity.value);
+  } else {
+    messageCity.style.color = "red";
+    messageCity.innerHTML = "Nom de ville invalide";
+  }
+};
+
+// VALIDATION CHAMP ADRESSE
+
+storageAddress.addEventListener("change", function () {
+  validAdress(this);
+});
+const validAdress = function (storageAddress) {
+  const rejexAdress = new RegExp("[w',-\\/.s]");
+  const testAdress = rejexAdress.test(storageAddress.value);
+
+  if (testAdress) {
+    messageAddress.style.color = "green";
+    messageAddress.innerHTML = "Adresse valide";
+    localStorage.setItem("email", storageAddress.value);
+  } else {
+    messageAddress.style.color = "red";
+    messageAddress.innerHTML = "Adresse invalide";
+  }
+};
+
+// VALIDATION CHAMP EMAIL
+storageEmail.addEventListener("change", function () {
+  validEmail(this);
+});
+
+const validEmail = function (storageEmail) {
+  const rejexEmail = new RegExp(
+    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$",
+    "g"
+  );
+  const testEmail = rejexEmail.test(storageEmail.value);
+
+  if (testEmail) {
+    messageEmail.style.color = "green";
+    messageEmail.innerHTML = "Email valide";
+    localStorage.setItem("email", storageEmail.value);
+  } else {
+    messageEmail.style.color = "red";
+    messageEmail.innerHTML = "Email invalide";
+  }
+};
