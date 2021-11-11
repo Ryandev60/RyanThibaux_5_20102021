@@ -11,97 +11,105 @@ if (search_params.has("id")) {
 fetch(`http://localhost:3000/api/products/${id}`)
   .then((response) => response.json())
   .then((response) => {
-    showProducts(response);
+    showproduct(response);
   })
   .catch((error) => alert("Erreur : " + error));
 
-// AFFICHAGE DES PRODUITS
+// RECUPERATION TITRE
 
-function showProducts(products) {
-  // TITRE
+const productTitle = document.getElementById("title");
 
-  const productTitle = document.getElementById("title");
-  productTitle.innerHTML = products.name;
+// RECUPERATION DIV IMG ET CREATION IMG
 
-  // IMAGE
+const productImgDiv = document.querySelector(".item__img");
+const productImg = document.createElement("img");
+productImgDiv.appendChild(productImg);
 
-  const productImgDiv = document.querySelector(".item__img");
-  const productImg = document.createElement("img");
-  productImgDiv.appendChild(productImg);
-  productImg.src = products.imageUrl;
-  productImg.alt = products.name;
+// RECUPERATION PRIX
 
-  // PRIX
+const productPrice = document.getElementById("price");
 
-  const productPrice = document.getElementById("price");
-  productPrice.innerHTML = products.price;
+// RECUPERATION DESCRIPTION
 
-  // DESCRIPTION
+const productDescription = document.getElementById("description");
 
-  const productDescription = document.getElementById("description");
-  productDescription.innerHTML = products.description;
+// RECUPERATION COULEURS
+
+const productColors = document.getElementById("colors");
+
+// RECUPERATION BOUTTON AJOUTER AU PANIER
+
+const addToCartButton = document.getElementById("addToCart");
+
+// AFFICHAGE DU PRODUIT
+
+function showproduct(product) {
+  // AFFICHAGE DU TITRE
+
+  productTitle.innerHTML = product.name;
+
+  // AFFICHAGE DE L'IMAGE
+
+  productImg.src = product.imageUrl;
+  productImg.alt = product.name;
+
+  // AFFICHAGE DU PRIX
+
+  productPrice.innerHTML = product.price;
+
+  // AFFICHAGE DE LA DESCRIPTION
+
+  productDescription.innerHTML = product.description;
 
   // SELECTION COULEUR
 
-  const productColors = document.getElementById("colors");
-  for (const color of products.colors) {
+  for (const color of product.colors) {
     const productColorsOptions = document.createElement("option");
     productColorsOptions.innerHTML = color;
     productColors.appendChild(productColorsOptions);
   }
 
-  // RECUPERATION BOUTON CART
-
-  const addToCartButton = document.getElementById("addToCart");
-
   // AJOUT ECOUTEUR D'EVENEMENT CLICK SUR LE BOUTON CART
 
   addToCartButton.addEventListener("click", () => {
-    addToCart(products);
+    addToCart(product);
   });
 
   // RECUPERATION DE L'OBJET CART DANS LE LOCAL STORAGE
 
-  const addToCart = (products) => {
+  const addToCart = (product) => {
     let cartData = localStorage.getItem("cart");
     const quantity = document.getElementById("quantity");
     console.log(quantity.value);
+
+    // CREATION DE L'OBJET QUI SERA INTRODUIT DANS CARTDATA
     const productToAdd = {
-      id: products._id,
-      image: products.imageUrl,
+      id: product._id,
+      image: product.imageUrl,
       color: productColors.value,
-      name: products.name,
-      price: products.price,
+      name: product.name,
+      price: product.price,
       quantity: parseInt(quantity.value),
     };
 
-    // SI LE CLIENT NE SELECTIONNE PAS DE QUANTITE OU DE COULEUR ON LUI DEMANDE
     if (quantity.value == 0 || productColors.value == "") {
+      // SI LE CLIENT NE SELECTIONNE PAS DE QUANTITE OU DE COULEUR ON LUI DEMANDE
       alert("Veuillez choisir une couleur ainsi que la quantité du produit");
-    }
-
-    // SI L'OBJET DANS LE LOCAL STORAGE N'EXISTE PAS ON LE CREE
-    else if (cartData === null) {
+    } else if (cartData === null) {
+      // SI L'OBJET DANS LE LOCAL STORAGE N'EXISTE PAS ON LE CREE
       cartData = [productToAdd];
-    }
-
-    // SINON ON TRANSFORME EN TABLEAU
-    else {
+    } else {
+      // SINON ON TRANSFORME EN TABLEAU
       cartData = JSON.parse(cartData);
       for (let i = 0; i < cartData.length; i++) {
-        if (cartData[i].id === products._id) {
+        if (cartData[i].id === product._id && cartData[i].color === productColors.value) {
           console.log("Product existe");
-          if (cartData[i].color === productColors.value) {
-            console.log("Color existe");
-  
+          
+
             cartData[i].quantity += parseInt(quantity.value);
-          } else {
-            console.log("No color new product");
-  
-            addProduct(cartData, productToAdd);
-          }
+            
+            
         } else {
-          console.log("New product");
           addProduct(cartData, productToAdd);
         }
       }
@@ -109,8 +117,6 @@ function showProducts(products) {
 
     console.log("Panier init");
     console.log(cartData);
-
-   
 
     // TRANSFORMATION TABLEAU EN OBJET JSON PUIS AJOUT AU LOCAL STORAGE
 
@@ -130,5 +136,3 @@ function showProducts(products) {
 const addProduct = (cartData, productToAdd) => {
   cartData.push(productToAdd);
 };
-
-

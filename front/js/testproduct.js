@@ -11,40 +11,40 @@ if (search_params.has("id")) {
 fetch(`http://localhost:3000/api/products/${id}`)
   .then((response) => response.json())
   .then((response) => {
-    showProducts(response);
+    showproduct(response);
   })
   .catch((error) => alert("Erreur : " + error));
 
 // AFFICHAGE DES PRODUITS
 
-function showProducts(products) {
+function showproduct(product) {
   // TITRE
 
   const productTitle = document.getElementById("title");
-  productTitle.innerHTML = products.name;
+  productTitle.innerHTML = product.name;
 
   // IMAGE
 
   const productImgDiv = document.querySelector(".item__img");
   const productImg = document.createElement("img");
   productImgDiv.appendChild(productImg);
-  productImg.src = products.imageUrl;
-  productImg.alt = products.name;
+  productImg.src = product.imageUrl;
+  productImg.alt = product.name;
 
   // PRIX
 
   const productPrice = document.getElementById("price");
-  productPrice.innerHTML = products.price;
+  productPrice.innerHTML = product.price;
 
   // DESCRIPTION
 
   const productDescription = document.getElementById("description");
-  productDescription.innerHTML = products.description;
+  productDescription.innerHTML = product.description;
 
   // SELECTION COULEUR
 
   const productColors = document.getElementById("colors");
-  for (const color of products.colors) {
+  for (const color of product.colors) {
     const productColorsOptions = document.createElement("option");
     productColorsOptions.innerHTML = color;
     productColors.appendChild(productColorsOptions);
@@ -57,21 +57,20 @@ function showProducts(products) {
   // AJOUT ECOUTEUR D'EVENEMENT CLICK SUR LE BOUTON CART
 
   addToCartButton.addEventListener("click", () => {
-    addToCart(products);
+    addToCart(product);
   });
 
   // RECUPERATION DE L'OBJET CART DANS LE LOCAL STORAGE
 
-  const addToCart = (products) => {
+  const addToCart = (product) => {
     let cartData = localStorage.getItem("cart");
     const quantity = document.getElementById("quantity");
-    console.log(quantity.value);
     const productToAdd = {
-      id: products._id,
-      image: products.imageUrl,
+      id: product._id,
+      image: product.imageUrl,
       color: productColors.value,
-      name: products.name,
-      price: products.price,
+      name: product.name,
+      price: product.price,
       quantity: parseInt(quantity.value),
     };
 
@@ -89,28 +88,26 @@ function showProducts(products) {
     else {
       cartData = JSON.parse(cartData);
       for (let i = 0; i < cartData.length; i++) {
-        if (cartData[i].id === products._id) {
-          console.log("Product existe");
+        if (cartData[i].id === product._id) {
           if (cartData[i].color === productColors.value) {
-            console.log("Color existe");
-  
             cartData[i].quantity += parseInt(quantity.value);
-          } else {
-            console.log("No color new product");
-  
+            console.log("addition");
+            
+          } else if (i === cartData.length - 1){
+            console.log("New product");
             addProduct(cartData, productToAdd);
+            
           }
-        } else {
-          console.log("New product");
+          
+        } else if (i === cartData.length - 1) {
+          console.log("New product 2");
           addProduct(cartData, productToAdd);
+          
         }
       }
+      
     }
-
-    console.log("Panier init");
-    console.log(cartData);
-
-   
+    
 
     // TRANSFORMATION TABLEAU EN OBJET JSON PUIS AJOUT AU LOCAL STORAGE
 
@@ -130,17 +127,3 @@ function showProducts(products) {
 const addProduct = (cartData, productToAdd) => {
   cartData.push(productToAdd);
 };
-
-// for (var i = 0; i < cartData.length; i++) {
-//   if (
-//     cartData[i]["id"] &&
-//     cartData[i]["color"] == cartData[i]["id"] &&
-//     cartData[i]["color"]
-//   ) {
-//     cartData["quantity"] = cartData["quantity"] + quantity.value;
-//   }
-// }
-
-// for (const elementId in cartData) {
-//   ;
-// }
