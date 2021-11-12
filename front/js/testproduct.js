@@ -15,44 +15,59 @@ fetch(`http://localhost:3000/api/products/${id}`)
   })
   .catch((error) => alert("Erreur : " + error));
 
-// AFFICHAGE DES PRODUITS
+// RECUPERATION TITRE
+
+const productTitle = document.getElementById("title");
+
+// RECUPERATION DIV IMG ET CREATION IMG
+
+const productImgDiv = document.querySelector(".item__img");
+const productImg = document.createElement("img");
+productImgDiv.appendChild(productImg);
+
+// RECUPERATION PRIX
+
+const productPrice = document.getElementById("price");
+
+// RECUPERATION DESCRIPTION
+
+const productDescription = document.getElementById("description");
+
+// RECUPERATION COULEURS
+
+const productColors = document.getElementById("colors");
+
+// RECUPERATION BOUTTON AJOUTER AU PANIER
+
+const addToCartButton = document.getElementById("addToCart");
+
+// AFFICHAGE DU PRODUIT
 
 function showproduct(product) {
-  // TITRE
+  // AFFICHAGE DU TITRE
 
-  const productTitle = document.getElementById("title");
   productTitle.innerHTML = product.name;
 
-  // IMAGE
+  // AFFICHAGE DE L'IMAGE
 
-  const productImgDiv = document.querySelector(".item__img");
-  const productImg = document.createElement("img");
-  productImgDiv.appendChild(productImg);
   productImg.src = product.imageUrl;
   productImg.alt = product.name;
 
-  // PRIX
+  // AFFICHAGE DU PRIX
 
-  const productPrice = document.getElementById("price");
   productPrice.innerHTML = product.price;
 
-  // DESCRIPTION
+  // AFFICHAGE DE LA DESCRIPTION
 
-  const productDescription = document.getElementById("description");
   productDescription.innerHTML = product.description;
 
   // SELECTION COULEUR
 
-  const productColors = document.getElementById("colors");
   for (const color of product.colors) {
     const productColorsOptions = document.createElement("option");
     productColorsOptions.innerHTML = color;
     productColors.appendChild(productColorsOptions);
   }
-
-  // RECUPERATION BOUTON CART
-
-  const addToCartButton = document.getElementById("addToCart");
 
   // AJOUT ECOUTEUR D'EVENEMENT CLICK SUR LE BOUTON CART
 
@@ -65,6 +80,9 @@ function showproduct(product) {
   const addToCart = (product) => {
     let cartData = localStorage.getItem("cart");
     const quantity = document.getElementById("quantity");
+    console.log(quantity.value);
+
+    // CREATION DE L'OBJET QUI SERA INTRODUIT DANS CARTDATA
     const productToAdd = {
       id: product._id,
       image: product.imageUrl,
@@ -74,40 +92,34 @@ function showproduct(product) {
       quantity: parseInt(quantity.value),
     };
 
-    // SI LE CLIENT NE SELECTIONNE PAS DE QUANTITE OU DE COULEUR ON LUI DEMANDE
     if (quantity.value == 0 || productColors.value == "") {
+      // SI LE CLIENT NE SELECTIONNE PAS DE QUANTITE OU DE COULEUR ON LUI DEMANDE
       alert("Veuillez choisir une couleur ainsi que la quantité du produit");
-    }
-
-    // SI L'OBJET DANS LE LOCAL STORAGE N'EXISTE PAS ON LE CREE
-    else if (cartData === null) {
+    } else if (cartData === null) {
+      // SI L'OBJET DANS LE LOCAL STORAGE N'EXISTE PAS ON LE CREE
       cartData = [productToAdd];
-    }
-
-    // SINON ON TRANSFORME EN TABLEAU
-    else {
+    }  else {
       cartData = JSON.parse(cartData);
       for (let i = 0; i < cartData.length; i++) {
-        if (cartData[i].id === product._id) {
-          if (cartData[i].color === productColors.value) {
-            cartData[i].quantity += parseInt(quantity.value);
-            console.log("addition");
-            
-          } else if (i === cartData.length - 1){
-            console.log("New product");
-            addProduct(cartData, productToAdd);
-            
-          }
+        if (
+          cartData[i].id === product._id &&
+          cartData[i].color === productColors.value
+        ) {
+          cartData[i].quantity += parseInt(quantity.value);
+          console.log("addition");
+          break;
           
         } else if (i === cartData.length - 1) {
           console.log("New product 2");
+          console.log(cartData.length - 1);
           addProduct(cartData, productToAdd);
-          
+          break
         }
       }
-      
     }
-    
+
+    console.log("Panier init");
+    console.log(cartData);
 
     // TRANSFORMATION TABLEAU EN OBJET JSON PUIS AJOUT AU LOCAL STORAGE
 

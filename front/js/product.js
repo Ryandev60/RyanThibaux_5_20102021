@@ -98,19 +98,22 @@ function showproduct(product) {
     } else if (cartData === null) {
       // SI L'OBJET DANS LE LOCAL STORAGE N'EXISTE PAS ON LE CREE
       cartData = [productToAdd];
-    } else {
-      // SINON ON TRANSFORME EN TABLEAU
+    }  else {
       cartData = JSON.parse(cartData);
       for (let i = 0; i < cartData.length; i++) {
-        if (cartData[i].id === product._id && cartData[i].color === productColors.value) {
-          console.log("Product existe");
+        if (
+          cartData[i].id === product._id &&
+          cartData[i].color === productColors.value
+        ) {
+          cartData[i].quantity += parseInt(quantity.value);
+          console.log("addition");
+          break;
           
-
-            cartData[i].quantity += parseInt(quantity.value);
-            
-            
-        } else {
+        } else if (i === cartData.length - 1) {
+          console.log("New product 2");
+          console.log(cartData.length - 1);
           addProduct(cartData, productToAdd);
+          break
         }
       }
     }
