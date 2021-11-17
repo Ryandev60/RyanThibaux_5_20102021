@@ -1,23 +1,12 @@
 //RECUPERATION DES DONNES
 
-fetch("http://localhost:3000/api/products")
-  .then((response) => response.json())
-  .then((response) => {
-    showProducts(response);
-  })
-  .catch((error) => alert("Erreur : " + error));
-
-function showProducts(products) {
-  const cart = JSON.parse(localStorage.getItem("cart"));
-  
-  
-
+function showProducts() {
   // SECTION
+  let quantityTotal = 0;
 
   const productSection = document.getElementById("cart__items");
-  for (const product of cart) {
+  for (let i = 0; i < cartData.length; i++) {
     // ARTICLE
-    console.log(cart[product]);
     const productArticle = document.createElement("article");
     productSection.appendChild(productArticle);
     productArticle.classList.add("cart__item");
@@ -32,13 +21,13 @@ function showProducts(products) {
 
     const productLinkImg = document.createElement("a");
     productDivImg.appendChild(productLinkImg);
-    productLinkImg.href = `http://127.0.0.1:5500/front/html/product.html?id=${product.id}`
+    productLinkImg.href = `http://127.0.0.1:5500/front/html/product.html?id=${cartData[i].id}`;
 
     // IMAGE
 
     const productImg = document.createElement("img");
     productLinkImg.appendChild(productImg);
-    productImg.src = product.image;
+    productImg.src = cartData[i].image;
     productImg.alt = localStorage.getItem("name");
 
     // DIV PARENT NOM ET PRIX DU PRODUIT
@@ -50,7 +39,7 @@ function showProducts(products) {
     // DIV ENFANT NOM ET PRIX DU PRODUIT
 
     const productDivNamePrice = document.createElement("div");
-    productDivNamePrice.style.alignItems = "center"
+    productDivNamePrice.style.alignItems = "center";
     productCard.appendChild(productDivNamePrice);
     productDivNamePrice.classList.add("cart__item__content__titlePrice");
 
@@ -58,19 +47,19 @@ function showProducts(products) {
 
     const productTitle = document.createElement("h2");
     productDivNamePrice.appendChild(productTitle);
-    productTitle.innerHTML = product.name;
+    productTitle.innerHTML = cartData[i].name;
 
     // COULEUR DU PRODUIT
 
     const productColor = document.createElement("p");
     productDivNamePrice.appendChild(productColor);
-    productColor.innerHTML = product.color;
+    productColor.innerHTML = cartData[i].color;
 
     // PRIX
 
     const productPrice = document.createElement("p");
     productDivNamePrice.appendChild(productPrice);
-    productPrice.innerHTML = product.price + " €";
+    productPrice.innerHTML = cartData[i].price + " €";
 
     // DIV PARENT QUANTITE
 
@@ -86,7 +75,6 @@ function showProducts(products) {
       "cart__item__content__settings__quantity"
     );
 
-
     // AFFICHAGE QUANTITE
 
     const productNumber = document.createElement("p");
@@ -98,23 +86,26 @@ function showProducts(products) {
     const productSelectNumber = document.createElement("input");
     productDivNumberChildren.appendChild(productSelectNumber);
     productSelectNumber.classList.add("itemQuantity");
-    productSelectNumber.id = "quantity"
+    productSelectNumber.id = "quantity";
     productSelectNumber.type = "number";
     productSelectNumber.name = "itemQuantity";
     productSelectNumber.min = "1";
     productSelectNumber.max = "100";
-    productSelectNumber.value = product.quantity;
+    productSelectNumber.value = cartData[i].quantity;
 
-    productSelectNumber.addEventListener("change", function() {
-      modifierQuantity(this);
+
+    // ECOUTEUR D'EVENEMENT MODIFICATION QUANTITE
+
+    productSelectNumber.addEventListener("change", function () {
+      modifierQuantity(cartData[i]);
     });
-    console.log(product.quantity);
     const modifierQuantity = function () {
+      cartData[i].quantity = parseInt(productSelectNumber.value);
+      localStorage.setItem("cart", JSON.stringify(cartData));
+      totalPerProduct.innerHTML = cartData[i].quantity * cartData[i].price + " €";
+      quantityTotal += cartData[i].quantity;
       
-      product.quantity = productSelectNumber.value
-      console.log(product);
-    } 
-    
+    };
 
     // DIV SUPPRESSION QUANTITE
 
@@ -122,24 +113,39 @@ function showProducts(products) {
     productDivNumber.appendChild(productDivDelete);
     productDivDelete.classList.add("cart__item__content__settings__delete");
 
-    // AFFICHAGE DE SUPPRESSION
+    // SUPRESSION PRODUIT
 
     const productDelete = document.createElement("p");
     productDivDelete.appendChild(productDelete);
     productDelete.classList.add("deleteItem");
     productDelete.innerHTML = "Supprimer";
-      
-    productDelete.addEventListener("click", function() {
-      cart.pop(product)
-      console.log("hello");
-      console.log(cart);
-      console.log(cart.pop(product));
-    }) 
-  }
+    productDelete.addEventListener("click", function () {
+      cartData.splice(i, 1);
+      localStorage.setItem("cart", JSON.stringify(cartData));
+      alert("Ce produit a été supprimer du panier");
+      window.location.href = "cart.html";
+    });
 
-  
-    
-    
+    // TOTAL PAR PRODUIT 
+
+    const quantityBlock = document.createElement("div");
+    productDivNumberChildren.appendChild(quantityBlock);
+    quantityBlock.appendChild(productNumber);
+    quantityBlock.appendChild(productSelectNumber);
+    quantityBlock.style.display = "flex";
+    productDivNumberChildren.style.justifyContent = "space-between"
+    const totalPerProduct = document.createElement("p");
+    productDivNumberChildren.appendChild(totalPerProduct);
+    totalPerProduct.innerHTML = cartData[i].quantity * cartData[i].price + " €";
+    totalPerProduct.style.fontSize = "18px"
+
+
+    // TOTAL QUANTITE
+    if (i < cartData.length) {
+      quantityTotal += cartData[i].quantity;
+      console.log("hello");
+    }
+  }
 
   // TOTAL
 
@@ -149,7 +155,6 @@ function showProducts(products) {
 
   // AFFICHAGE TOTAL
 
-  const testTotal = document.getElementsByClassName("itemQuantity");
   const productTotal = document.createElement("p");
   productDivTotal.appendChild(productTotal);
   let productTotalSpan = document.createElement("span");
@@ -157,14 +162,28 @@ function showProducts(products) {
   productTotalSpan = localStorage.getItem("quantity");
   const productTotalSpanB = document.createElement("span");
   productTotal.appendChild(productTotalSpanB);
-  productTotal.innerHTML = "salut";
+  productTotal.innerHTML = quantityTotal;
 
-  // BOUTTON COMMANDER 
+  // BOUTTON COMMANDER
   const buttonDiv = document.querySelector(".cart__order__form__submit");
   const buttonLink = document.createElement("a");
   buttonDiv.appendChild(buttonLink);
   buttonLink.href = "confirmation.html";
   const button = document.getElementById("order");
+}
+const cartData = JSON.parse(localStorage.getItem("cart"));
+
+// FORMULAIRE EN DISPLAY NONE ET PARAGRAPHE VOTRE PANIER EST VIDE
+
+const form = document.getElementsByClassName("cart__order");
+const title = document.getElementById("yourCart");
+
+if (cartData == null || cartData.length == 0) {
+  form[0].style.display = "none";
+  localStorage.removeItem("cart");
+  title.innerHTML = "Votre panier est vide";
+} else {
+  showProducts();
 }
 // RECUPERATION DES CHAMPS DE FORMULAIRES ET DES MESSAGES D'ERREUR
 
@@ -197,7 +216,7 @@ const validFirstName = function () {
   if (testFirstName) {
     messageFirstName.style.color = "green";
     messageFirstName.innerHTML = "Prénom valide";
-    localStorage.setItem("firstName", storageFirstName.value);
+    localStorage.setItem("firstName", JSON.stringify(storageFirstName.value));
   } else {
     messageFirstName.style.color = "red";
     messageFirstName.innerHTML = "Prénom invalide";
@@ -213,7 +232,7 @@ const validLastName = function (validLetter) {
   if (testLastName) {
     messageLastName.style.color = "green";
     messageLastName.innerHTML = "Nom valide";
-    localStorage.setItem("lastName", storageLastName.value);
+    localStorage.setItem("lastName", JSON.stringify(storageLastName.value));
   } else {
     messageLastName.style.color = "red";
     messageLastName.innerHTML = "Nom invalide";
@@ -230,7 +249,7 @@ const validCity = function (validLetter) {
   if (testCity) {
     messageCity.style.color = "green";
     messageCity.innerHTML = "Nom de ville valide";
-    localStorage.setItem("city", storageCity.value);
+    localStorage.setItem("city", JSON.stringify(storageCity.value));
   } else {
     messageCity.style.color = "red";
     messageCity.innerHTML = "Nom de ville invalide";
@@ -249,7 +268,7 @@ const validAdress = function (storageAddress) {
   if (testAdress) {
     messageAddress.style.color = "green";
     messageAddress.innerHTML = "Adresse valide";
-    localStorage.setItem("email", storageAddress.value);
+    localStorage.setItem("adress", JSON.stringify(storageAddress.value));
   } else {
     messageAddress.style.color = "red";
     messageAddress.innerHTML = "Adresse invalide";
@@ -271,9 +290,10 @@ const validEmail = function (storageEmail) {
   if (testEmail) {
     messageEmail.style.color = "green";
     messageEmail.innerHTML = "Email valide";
-    localStorage.setItem("email", storageEmail.value);
+    localStorage.setItem("email", JSON.stringify(storageEmail.value));
   } else {
     messageEmail.style.color = "red";
     messageEmail.innerHTML = "Email invalide";
   }
 };
+

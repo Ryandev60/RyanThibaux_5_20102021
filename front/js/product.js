@@ -80,7 +80,6 @@ function showproduct(product) {
   const addToCart = (product) => {
     let cartData = localStorage.getItem("cart");
     const quantity = document.getElementById("quantity");
-    console.log(quantity.value);
 
     // CREATION DE L'OBJET QUI SERA INTRODUIT DANS CARTDATA
     const productToAdd = {
@@ -91,14 +90,17 @@ function showproduct(product) {
       price: product.price,
       quantity: parseInt(quantity.value),
     };
+   
 
     if (quantity.value == 0 || productColors.value == "") {
       // SI LE CLIENT NE SELECTIONNE PAS DE QUANTITE OU DE COULEUR ON LUI DEMANDE
       alert("Veuillez choisir une couleur ainsi que la quantité du produit");
+      console.log(cartData);
     } else if (cartData === null) {
       // SI L'OBJET DANS LE LOCAL STORAGE N'EXISTE PAS ON LE CREE
       cartData = [productToAdd];
-    }  else {
+      redirectionToCommand();
+    } else {
       cartData = JSON.parse(cartData);
       for (let i = 0; i < cartData.length; i++) {
         if (
@@ -106,32 +108,19 @@ function showproduct(product) {
           cartData[i].color === productColors.value
         ) {
           cartData[i].quantity += parseInt(quantity.value);
-          console.log("addition");
+          redirectionToCommand();
           break;
-          
         } else if (i === cartData.length - 1) {
-          console.log("New product 2");
-          console.log(cartData.length - 1);
           addProduct(cartData, productToAdd);
-          break
+          redirectionToCommand();
+
+          break;
         }
       }
     }
-
-    console.log("Panier init");
-    console.log(cartData);
-
     // TRANSFORMATION TABLEAU EN OBJET JSON PUIS AJOUT AU LOCAL STORAGE
-
-    localStorage.setItem("cart", JSON.stringify(cartData));
-    if (
-      confirm(
-        "Le produit a été ajouté au panier. Voulez-vous voir votre panier ?"
-      )
-    ) {
-      // REDIRECTION PAGE PANIER
-
-      location.href = "cart.html";
+    if (cartData) {
+      localStorage.setItem("cart", JSON.stringify(cartData));
     }
   };
 }
@@ -139,3 +128,15 @@ function showproduct(product) {
 const addProduct = (cartData, productToAdd) => {
   cartData.push(productToAdd);
 };
+
+function redirectionToCommand(cartData) {
+  if (
+    confirm(
+      "Le produit a été ajouté au panier. Voulez-vous voir votre panier ?"
+    )
+  ) {
+    // REDIRECTION PAGE PANIER
+
+    location.href = "cart.html";
+  }
+}
