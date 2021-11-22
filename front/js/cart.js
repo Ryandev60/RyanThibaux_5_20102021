@@ -1,10 +1,15 @@
-//AFFICHAGE DES PRODUITS DANS LE PANIER
 let quantityTotal = 0;
 let priceTotal = 0;
 const productSection = document.getElementById("cart__items");
+// RECUPERATION DES PRODUITS DANS LE PANIER
+
+const cartData = JSON.parse(localStorage.getItem("cart"));
+
+//AFFICHAGE DES PRODUITS DANS LE PANIER
+
 function showProducts() {
   // SECTION
-  
+
   for (let i = 0; i < cartData.length; i++) {
     // ARTICLE
     const productArticle = document.createElement("article");
@@ -28,7 +33,7 @@ function showProducts() {
     const productImg = document.createElement("img");
     productLinkImg.appendChild(productImg);
     productImg.src = cartData[i].image;
-    productImg.alt = localStorage.getItem("name");
+    productImg.alt = cartData[i].name;
 
     // DIV PARENT NOM ET PRIX DU PRODUIT
 
@@ -98,7 +103,13 @@ function showProducts() {
     productSelectNumber.addEventListener("change", function () {
       modifierQuantity();
     });
+
+    // MODIFICATION QUANTITE
+
     const modifierQuantity = function () {
+      if (productSelectNumber.value == 0) {
+        productSelectNumber.value = 1;
+      }
       cartData[i].quantity = parseInt(productSelectNumber.value);
       localStorage.setItem("cart", JSON.stringify(cartData));
       totalPerProduct.innerHTML =
@@ -115,8 +126,6 @@ function showProducts() {
         "Total: " + quantityTotal + " articles " + priceTotal + " €";
     };
 
-    console.log(cartData[i]["quantity"]);
-
     // DIV SUPPRESSION QUANTITE
 
     const productDivDelete = document.createElement("div");
@@ -132,7 +141,7 @@ function showProducts() {
     productDelete.addEventListener("click", function () {
       cartData.splice(i, 1);
       localStorage.setItem("cart", JSON.stringify(cartData));
-      alert("Ce produit a été supprimer du panier");
+      alert("Le produit a bien été supprimer du panier");
       window.location.href = "cart.html";
     });
 
@@ -152,10 +161,7 @@ function showProducts() {
     // TOTAL QUANTITE ET PRIX
 
     quantityTotal += cartData[i].quantity;
-    console.log("hello");
-
     priceTotal += cartData[i].price * cartData[i].quantity;
-    console.log(priceTotal);
   }
 
   // TOTAL
@@ -176,15 +182,13 @@ function showProducts() {
   cartTotal.innerHTML =
     "Total: " + quantityTotal + " articles " + priceTotal + " €";
 
-  // BOUTTON COMMANDER AVEC FONCTION DE SOUMISSION DU FORMULAIRE
+  // BOUTTON COMMANDER AVEC ECOUT DE L'EVENEMENT QUI EXECUTE LA FONCTION SUBMIT
 
-  const buttonDiv = document.querySelector(".cart__order__form__submit");
-  const button = document.getElementById("order");
-  button.addEventListener("click", function () {
-    submit();
+  const orderForm = document.getElementById("order");
+  orderForm.addEventListener("submit", (event) => {
+    submit(event);
   });
 }
-const cartData = JSON.parse(localStorage.getItem("cart"));
 
 // FORMULAIRE EN DISPLAY NONE ET PARAGRAPHE VOTRE PANIER EST VIDE
 
@@ -210,7 +214,6 @@ const storageCity = document.getElementById("city");
 const messageCity = document.getElementById("cityErrorMsg");
 const storageEmail = document.getElementById("email");
 const messageEmail = document.getElementById("emailErrorMsg");
-
 
 // REG EXP LETTER
 
@@ -258,7 +261,7 @@ const validLastName = function () {
 storageCity.addEventListener("change", function () {
   validCity();
 });
-const validCity = function () {
+const validCity = () => {
   const testCity = rejexLetter.test(storageCity.value);
   if (testCity) {
     messageCity.style.color = "green";
@@ -302,7 +305,6 @@ const validEmail = function () {
   if (testEmail) {
     messageEmail.style.color = "green";
     messageEmail.innerHTML = "Email valide";
-    console.log(messageEmail.style.color);
   } else {
     messageEmail.style.color = "red";
     messageEmail.innerHTML = "Email invalide";
@@ -311,7 +313,7 @@ const validEmail = function () {
 
 // SOUMISSION DU FORMULAIRE SI TOUT LES CHAMPS SONT CORRECT
 
-const submit = function () {
+const submit = (event) => {
   event.preventDefault();
 
   if (
@@ -324,16 +326,42 @@ const submit = function () {
     const contact = {
       firstName: storageFirstName.value,
       lastName: storageLastName.value,
-      adress: storageAddress.value,
+      address: storageAddress.value,
       city: storageCity.value,
       email: storageEmail.value,
     };
-    let contactStorage = localStorage.setItem(
-      "contact",
-      JSON.stringify(contact)
-    );
+
+    localStorage.setItem("contact", JSON.stringify(contact));
+
+    let products = [];
+    for (let item of cartData) {
+      products.push(item.id);
+    }
+
+    const sendOrder = {
+      contact,
+      products,
+    };
+
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(sendOrder),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        localStorage.clear();
+        localStorage.setItem("firstName", response.contact.firstName);
+        localStorage.setItem("total", priceTotal);
+        const orderId = response.orderId;
+        window.location.href = "confirmation.html?orderid=" + orderId;
+      })
+      .catch((error) => {
+        alert("Erreur: " + error);
+      });
   } else {
     alert("Merci de remplir correctement tout les champs du formulaire.");
   }
 };
-

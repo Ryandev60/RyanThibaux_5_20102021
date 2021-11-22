@@ -2,10 +2,10 @@
 
 const str = document.location.href;
 const url = new URL(str);
-const search_params = new URLSearchParams(url.search);
+const searchParams = new URLSearchParams(url.search);
 
-if (search_params.has("id")) {
-  var id = search_params.get("id");
+if (searchParams.has("id")) {
+  var id = searchParams.get("id");
 }
 
 fetch(`http://localhost:3000/api/products/${id}`)
@@ -14,7 +14,7 @@ fetch(`http://localhost:3000/api/products/${id}`)
     showproduct(response);
   })
   .catch((error) => alert("Erreur : " + error));
-
+  
 // RECUPERATION TITRE
 
 const productTitle = document.getElementById("title");
