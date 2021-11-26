@@ -13,4 +13,5 @@ if (searchParams.has("orderid")) {
   }).format(localStorage.getItem("total"));
   const orderId = document.getElementById("orderId");
   orderId.innerHTML = id;
-}
+  localStorage.clear();
+};

@@ -1,13 +1,23 @@
-let quantityTotal = 0;
+// VARIABLE POUR PRIX TOTAL ET QUANTITE TOTAL
+
 let priceTotal = 0;
+let quantityTotal = 0;
+
+// VARIABLE QUI VA STOCKER LE CODE POUR CONVERTIR LE PRIX EN EURO
+
 const productSection = document.getElementById("cart__items");
+const euro = Intl.NumberFormat("fr-FR", {
+  style: "currency",
+  currency: "EUR",
+}).format;
+
 // RECUPERATION DES PRODUITS DANS LE PANIER
 
 const cartData = JSON.parse(localStorage.getItem("cart"));
 
 //AFFICHAGE DES PRODUITS DANS LE PANIER
 
-function showProducts() {
+function productsInCart() {
   // SECTION
 
   for (let i = 0; i < cartData.length; i++) {
@@ -35,24 +45,24 @@ function showProducts() {
     productImg.src = cartData[i].image;
     productImg.alt = cartData[i].name;
 
-    // DIV PARENT NOM ET PRIX DU PRODUIT
+    // DIV PARENT NOM, COULEUR ET PRIX DU PRODUIT
 
     const productCard = document.createElement("div");
     productArticle.appendChild(productCard);
     productCard.classList.add("cart__item__content");
 
-    // DIV ENFANT NOM ET PRIX DU PRODUIT
+    // DIV ENFANT NOM, COULEUR ET PRIX DU PRODUIT
 
     const productDivNamePrice = document.createElement("div");
     productDivNamePrice.style.alignItems = "center";
     productCard.appendChild(productDivNamePrice);
     productDivNamePrice.classList.add("cart__item__content__titlePrice");
 
-    // TITRE DU PRODUIT
+    // NOM DU PRODUIT
 
-    const productTitle = document.createElement("h2");
-    productDivNamePrice.appendChild(productTitle);
-    productTitle.innerHTML = cartData[i].name;
+    const productName = document.createElement("h2");
+    productDivNamePrice.appendChild(productName);
+    productName.innerHTML = cartData[i].name;
 
     // COULEUR DU PRODUIT
 
@@ -64,7 +74,7 @@ function showProducts() {
 
     const productPrice = document.createElement("p");
     productDivNamePrice.appendChild(productPrice);
-    productPrice.innerHTML = cartData[i].price + " €";
+    productPrice.innerHTML = euro(cartData[i].price);
 
     // DIV PARENT QUANTITE
 
@@ -98,22 +108,22 @@ function showProducts() {
     productSelectNumber.max = "100";
     productSelectNumber.value = cartData[i].quantity;
 
-    // ECOUTEUR D'EVENEMENT MODIFICATION QUANTITE
+    // QUAND LA QUANTITE CHANGE ON APELLE LA FONCTION modifierQuantity
 
-    productSelectNumber.addEventListener("change", function () {
+    productSelectNumber.addEventListener("change", () => {
       modifierQuantity();
     });
 
-    // MODIFICATION QUANTITE
+    // FONCTION MODIFICATION QUANTITE
 
-    const modifierQuantity = function () {
+    const modifierQuantity = () => {
       if (productSelectNumber.value == 0) {
         productSelectNumber.value = 1;
       }
       cartData[i].quantity = parseInt(productSelectNumber.value);
       localStorage.setItem("cart", JSON.stringify(cartData));
       totalPerProduct.innerHTML =
-        cartData[i].quantity * cartData[i].price + " €";
+        euro(cartData[i].quantity * cartData[i].price);
       quantityTotal = 0;
       priceTotal = 0;
 
@@ -123,7 +133,7 @@ function showProducts() {
       }
 
       cartTotal.innerHTML =
-        "Total: " + quantityTotal + " articles " + priceTotal + " €";
+        "Total: " + quantityTotal + " articles " + euro(priceTotal);
     };
 
     // DIV SUPPRESSION QUANTITE
@@ -138,7 +148,7 @@ function showProducts() {
     productDivDelete.appendChild(productDelete);
     productDelete.classList.add("deleteItem");
     productDelete.innerHTML = "Supprimer";
-    productDelete.addEventListener("click", function () {
+    productDelete.addEventListener("click", () => {
       cartData.splice(i, 1);
       localStorage.setItem("cart", JSON.stringify(cartData));
       alert("Le produit a bien été supprimer du panier");
@@ -155,7 +165,7 @@ function showProducts() {
     productDivNumberChildren.style.justifyContent = "space-between";
     const totalPerProduct = document.createElement("p");
     productDivNumberChildren.appendChild(totalPerProduct);
-    totalPerProduct.innerHTML = cartData[i].quantity * cartData[i].price + " €";
+    totalPerProduct.innerHTML = euro(cartData[i].quantity * cartData[i].price);
     totalPerProduct.style.fontSize = "18px";
 
     // TOTAL QUANTITE ET PRIX
@@ -167,11 +177,14 @@ function showProducts() {
   // TOTAL
 
   const productDivTotal = document.createElement("div");
-  productSection.appendChild(productDivTotal);
   productDivTotal.classList.add("cart__price");
+  productDivTotal.style.display = "flex";
+  productDivTotal.style.alignItems = "center";
+  productDivTotal.style.justifyContent = "space-between";
+  productDivTotal.style.flexDirection = "row-reverse";
+  productSection.appendChild(productDivTotal);
 
   // AFFICHAGE TOTAL
-
   const cartTotal = document.createElement("p");
   productDivTotal.appendChild(cartTotal);
   let cartTotalSpan = document.createElement("span");
@@ -180,9 +193,30 @@ function showProducts() {
   const cartTotalSpanB = document.createElement("span");
   cartTotal.appendChild(cartTotalSpanB);
   cartTotal.innerHTML =
-    "Total: " + quantityTotal + " articles " + priceTotal + " €";
+    "Total: " + quantityTotal + " articles " + euro(priceTotal);
 
-  // BOUTTON COMMANDER AVEC ECOUT DE L'EVENEMENT QUI EXECUTE LA FONCTION SUBMIT
+  // VIDER LE PANIER
+
+  const clearCart = document.createElement("button");
+  productDivTotal.appendChild(clearCart);
+  clearCart.style.border = "none";
+  clearCart.style.borderRadius = "15px";
+  clearCart.style.color = "#3498db";
+  clearCart.style.fontFamily = "Montserrat";
+  clearCart.style.fontSize = "18px";
+  clearCart.style.cursor = "pointer";
+  clearCart.style.backgroundColor = "white";
+  clearCart.style.height = "fit-content";
+  clearCart.style.padding = "10px 7px 10px 7px";
+  clearCart.innerHTML = "Vider le panier";
+
+  clearCart.addEventListener("click", () => {
+    localStorage.clear();
+    alert("Votre panier à été vidé");
+    window.location.href = "cart.html";
+  });
+
+  // LORS DU CLIQUE SUR LE BOUTTON COMMANDER ON APELLE LA FONCTION submit
 
   const orderForm = document.getElementById("order");
   orderForm.addEventListener("submit", (event) => {
@@ -200,19 +234,19 @@ if (cartData == null || cartData.length == 0) {
   localStorage.removeItem("cart");
   title.innerHTML = "Votre panier est vide";
 } else {
-  showProducts();
+  productsInCart();
 }
 // RECUPERATION DES CHAMPS DE FORMULAIRES ET DES MESSAGES D'ERREUR
 
-const storageFirstName = document.getElementById("firstName");
+const inputFirstName = document.getElementById("firstName");
 const messageFirstName = document.getElementById("firstNameErrorMsg");
-const storageLastName = document.getElementById("lastName");
+const inputLastName = document.getElementById("lastName");
 const messageLastName = document.getElementById("lastNameErrorMsg");
-const storageAddress = document.getElementById("address");
+const inputAddress = document.getElementById("address");
 const messageAddress = document.getElementById("addressErrorMsg");
-const storageCity = document.getElementById("city");
+const inputCity = document.getElementById("city");
 const messageCity = document.getElementById("cityErrorMsg");
-const storageEmail = document.getElementById("email");
+const inputEmail = document.getElementById("email");
 const messageEmail = document.getElementById("emailErrorMsg");
 
 // REG EXP LETTER
@@ -224,11 +258,11 @@ const rejexLetter = new RegExp(
 
 // VALIDATION DU CHAMP PRENOM
 
-storageFirstName.addEventListener("change", function () {
+inputFirstName.addEventListener("change", () => {
   validFirstName(this);
 });
-const validFirstName = function () {
-  const testFirstName = rejexLetter.test(storageFirstName.value);
+const validFirstName = () => {
+  const testFirstName = rejexLetter.test(inputFirstName.value);
 
   if (testFirstName) {
     messageFirstName.style.color = "green";
@@ -240,12 +274,12 @@ const validFirstName = function () {
 };
 // VALIDATION DU CHAMP NOM
 
-storageLastName.addEventListener("change", function () {
+inputLastName.addEventListener("change", () => {
   validLastName();
 });
 
-const validLastName = function () {
-  const testLastName = rejexLetter.test(storageLastName.value);
+const validLastName = () => {
+  const testLastName = rejexLetter.test(inputLastName.value);
 
   if (testLastName) {
     messageLastName.style.color = "green";
@@ -258,11 +292,11 @@ const validLastName = function () {
 
 // VALIDATION DU CHAMP VILLE
 
-storageCity.addEventListener("change", function () {
+inputCity.addEventListener("change", () => {
   validCity();
 });
 const validCity = () => {
-  const testCity = rejexLetter.test(storageCity.value);
+  const testCity = rejexLetter.test(inputCity.value);
   if (testCity) {
     messageCity.style.color = "green";
     messageCity.innerHTML = "Nom de ville valide";
@@ -274,12 +308,12 @@ const validCity = () => {
 
 // VALIDATION CHAMP ADRESSE
 
-storageAddress.addEventListener("change", function () {
+inputAddress.addEventListener("change", () => {
   validAdress();
 });
-const validAdress = function () {
+const validAdress = () => {
   const rejexAdress = new RegExp("[w',-\\/.s]");
-  const testAdress = rejexAdress.test(storageAddress.value);
+  const testAdress = rejexAdress.test(inputAddress.value);
 
   if (testAdress) {
     messageAddress.style.color = "green";
@@ -291,16 +325,17 @@ const validAdress = function () {
 };
 
 // VALIDATION CHAMP EMAIL
-storageEmail.addEventListener("change", function () {
+
+inputEmail.addEventListener("change", () => {
   validEmail();
 });
 
-const validEmail = function () {
+const validEmail = () => {
   const rejexEmail = new RegExp(
     "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$",
     "g"
   );
-  const testEmail = rejexEmail.test(storageEmail.value);
+  const testEmail = rejexEmail.test(inputEmail.value);
 
   if (testEmail) {
     messageEmail.style.color = "green";
@@ -311,7 +346,7 @@ const validEmail = function () {
   }
 };
 
-// SOUMISSION DU FORMULAIRE SI TOUT LES CHAMPS SONT CORRECT
+// FONCTION submit, SOUMISSION DU FORMULAIRE SI TOUT LES CHAMPS SONT CORRECT
 
 const submit = (event) => {
   event.preventDefault();
@@ -324,11 +359,11 @@ const submit = (event) => {
     messageEmail.style.color == "green"
   ) {
     const contact = {
-      firstName: storageFirstName.value,
-      lastName: storageLastName.value,
-      address: storageAddress.value,
-      city: storageCity.value,
-      email: storageEmail.value,
+      firstName: inputFirstName.value,
+      lastName: inputLastName.value,
+      address: inputAddress.value,
+      city: inputCity.value,
+      email: inputEmail.value,
     };
 
     localStorage.setItem("contact", JSON.stringify(contact));

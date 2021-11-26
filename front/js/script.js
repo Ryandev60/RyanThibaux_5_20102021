@@ -10,8 +10,7 @@ fetch("http://localhost:3000/api/products")
 // AFFICHAGE DES PRODUITS
 
 function showProducts(products) {
-  for (const product of products) {;
-
+  for (const product of products) {
     // LIENS ARTICLE
 
     const productLink = document.createElement("a");
@@ -60,14 +59,6 @@ function showProducts(products) {
     productButton.style.borderRadius = "15px";
     productButton.style.padding = "8px 16px 8px 16px";
     productButton.style.marginBottom = "16px";
-
-    // LIEN BOUTTON
-    
-    const productButtonLink = document.createElement("a");
-    productArticle.appendChild(productButtonLink);
-    productButtonLink.appendChild(productButton);
-    productButtonLink.href = "product.html?id=" + product._id;
     productButton.style.cursor = "pointer";
-    productButtonLink.style.width = "fit-content";
   }
-};
+}
