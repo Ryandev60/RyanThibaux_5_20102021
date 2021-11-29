@@ -48,13 +48,6 @@ const productColors = document.getElementById("colors");
 
 const quantity = document.getElementById("quantity");
 
-// CREATION PRIX TOTAL
-
-const lastBlock = document.querySelector(".item__content__settings__quantity");
-const totalPrice = document.createElement("p");
-totalPrice.style.margin = "10px 0 0 0";
-lastBlock.appendChild(totalPrice);
-
 // RECUPERATION BOUTTON AJOUTER AU PANIER
 
 const addToCartButton = document.getElementById("addToCart");
@@ -87,72 +80,59 @@ function showproduct(product) {
     productColors.appendChild(productColorsOptions);
   }
 
-  // AFFICHAGE PRIX TOTAL
-
-  totalPrice.innerHTML =
-    "Total: " + euro(parseInt(quantity.value) * product.price);
-
-  quantity.addEventListener("change", () => {
-    if (quantity.value == 0) {
-      quantity.value = 1;
-    }
-    totalPrice.innerHTML =
-      "Total: " + euro(parseInt(quantity.value) * product.price);
-  });
-
   // LORS DU CLIC SUR LE BOUTTON AJOUTER AU PANIER ON APELLE LA FONCTION addToCart
-
   addToCartButton.addEventListener("click", () => {
     addToCart(product);
   });
+}
 
-  // RECUPERATION DE L'OBJET CART DANS LE LOCAL STORAGE
+// FONCTION AJOUT AU PANIER
 
-  const addToCart = (product) => {
-    let cartData = localStorage.getItem("cart");
+const addToCart = (product) => {
+  let cartData = localStorage.getItem("cart");
 
-    // CREATION DE L'OBJET QUI SERA INTRODUIT DANS CARTDATA
+  // CREATION DE L'OBJET QUI SERA INTRODUIT DANS CARTDATA
 
-    const productToAdd = {
-      id: product._id,
-      image: product.imageUrl,
-      color: productColors.value,
-      name: product.name,
-      price: product.price,
-      quantity: parseInt(quantity.value),
-    };
+  const productToAdd = {
+    id: product._id,
+    image: product.imageUrl,
+    color: productColors.value,
+    name: product.name,
+    price: product.price,
+    quantity: parseInt(quantity.value),
+  };
 
-    // SI LE CLIENT NE SELECTIONNE PAS DE QUANTITE OU DE COULEUR ON LUI DEMANDE
+  // SI LE CLIENT NE SELECTIONNE PAS DE QUANTITE OU DE COULEUR ON LUI DEMANDE
 
-    if (quantity.value == 0 || productColors.value == "") {
-      alert("Veuillez choisir une couleur ainsi que la quantité du produit");
-    } else if (cartData === null) {
-      // SI L'OBJET DANS LE LOCAL STORAGE N'EXISTE PAS ON LE CREE
-      cartData = [productToAdd];
-      redirectionToCart();
-    } else {
-      cartData = JSON.parse(cartData);
-      for (let i = 0; i < cartData.length; i++) {
-        if (
-          cartData[i].id === product._id &&
-          cartData[i].color === productColors.value
-        ) {
-          cartData[i].quantity += parseInt(quantity.value);
-          redirectionToCart();
-          break;
-        } else if (i === cartData.length - 1) {
-          addProduct(cartData, productToAdd);
-          redirectionToCart();
-          break;
-        }
+  if (quantity.value == 0 || productColors.value === "") {
+    alert("Veuillez choisir une couleur ainsi que la quantité du produit");
+  } else if (cartData === null) {
+    // SI L'OBJET DANS LE LOCAL STORAGE N'EXISTE PAS ON LE CREE
+    cartData = [productToAdd];
+    redirectionToCart();
+  } else {
+    cartData = JSON.parse(cartData);
+    for (let i = 0; i < cartData.length; i++) {
+      if (
+        cartData[i].id === product._id &&
+        cartData[i].color === productColors.value
+      ) {
+        cartData[i].quantity += parseInt(quantity.value);
+        redirectionToCart();
+        break;
+      } else if (i === cartData.length - 1) {
+        addProduct(cartData, productToAdd);
+        redirectionToCart();
+        break;
       }
     }
-    // TRANSFORMATION TABLEAU EN OBJET JSON PUIS AJOUT AU LOCAL STORAGE
-    if (productColors.value != "") {
-      localStorage.setItem("cart", JSON.stringify(cartData));
-    }
-  };
-}
+  }
+  // TRANSFORMATION TABLEAU EN OBJET JSON PUIS AJOUT AU LOCAL STORAGE
+  if (productColors.value !== "" && quantity.value != 0) {
+    localStorage.setItem("cart", JSON.stringify(cartData));
+    console.log(quantity.value);
+  }
+};
 
 // FONCTION POUR ENVOYER LES DONNEES DE cartData DANS productToAdd
 
@@ -162,7 +142,7 @@ const addProduct = (cartData, productToAdd) => {
 
 // FONCTION POUR REDIRIGER LE CLIENT VERS LA PAGE PANIER
 
-function redirectionToCart() {
+const redirectionToCart = () => {
   if (
     confirm(
       "Le produit a été ajouté au panier. Voulez-vous voir votre panier ?"
@@ -172,4 +152,4 @@ function redirectionToCart() {
 
     location.href = "cart.html";
   }
-}
+};
