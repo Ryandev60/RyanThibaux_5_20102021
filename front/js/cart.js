@@ -1,9 +1,10 @@
-// VARIABLE POUR PRIX TOTAL ET QUANTITE TOTAL
+// Varible qui va stocker le prix total et la quantité total
 
 let priceTotal = 0;
 let quantityTotal = 0;
 
 // VARIABLE QUI VA STOCKER LE CODE POUR CONVERTIR LE PRIX EN EURO
+// Varible qui va stocker le code pour convertir le prix en euro
 
 const productSection = document.getElementById("cart__items");
 const euro = Intl.NumberFormat("fr-FR", {
@@ -11,78 +12,89 @@ const euro = Intl.NumberFormat("fr-FR", {
   currency: "EUR",
 }).format;
 
-// AFFICHAGE DE LA PAGE SI LE PANIER CONTIENT AU MOINS UN ARTICLE
+// Recupération du tableau contenant les produits ajouter dans le panier
 
 const cartData = JSON.parse(localStorage.getItem("cart"));
+
+// Récupération du formulaire
 const form = document.getElementsByClassName("cart__order");
+
+// Récupération du titre "Votre panier"
 const title = document.getElementById("yourCart");
+
+// Récupération de la section panier
+
 const cartSection = document.getElementsByClassName("cart");
 
-//AFFICHAGE DES PRODUITS DANS LE PANIER
+// Affichage des produits dans le panier
+
+
+// On parcours le panier afin d'afficher chaque produit
 
 for (let product in cartData) {
-  // ARTICLE
+  // Article (vignette) de chaque produit
+
   const productArticle = document.createElement("article");
   productSection.appendChild(productArticle);
   productArticle.classList.add("cart__item");
 
-  // DIV IMAGE
+  // Div contenant l'image du produit
 
   const productDivImg = document.createElement("div");
   productArticle.appendChild(productDivImg);
   productDivImg.classList.add("cart__item__img");
 
-  // LIEN DU PRODUIT
+  // Lien de la page du produit
 
   const productLinkImg = document.createElement("a");
   productDivImg.appendChild(productLinkImg);
   productLinkImg.href = `http://127.0.0.1:5500/front/html/product.html?id=${cartData[product].id}`;
 
-  // IMAGE
+  // Image du produit
 
   const productImg = document.createElement("img");
   productLinkImg.appendChild(productImg);
   productImg.src = cartData[product].image;
   productImg.alt = cartData[product].name;
 
-  // DIV PARENT NOM, COULEUR ET PRIX DU PRODUIT
+  // Div parent contenant le nom, la couleur et le prix du produit
 
   const productCard = document.createElement("div");
   productArticle.appendChild(productCard);
   productCard.classList.add("cart__item__content");
 
-  // DIV ENFANT NOM, COULEUR ET PRIX DU PRODUIT
+  // Div enfant contenant le nom, la couleur et le prix du produit
 
   const productDivNamePrice = document.createElement("div");
   productDivNamePrice.style.alignItems = "center";
   productCard.appendChild(productDivNamePrice);
   productDivNamePrice.classList.add("cart__item__content__titlePrice");
 
-  // NOM DU PRODUIT
+  // Nom du produit
 
   const productName = document.createElement("h2");
   productDivNamePrice.appendChild(productName);
   productName.innerHTML = cartData[product].name;
 
-  // COULEUR DU PRODUIT
+  // Couleur du produitT
 
   const productColor = document.createElement("p");
   productDivNamePrice.appendChild(productColor);
   productColor.innerHTML = cartData[product].color;
 
-  // PRIX
+  // Prix du produit
 
   const productPrice = document.createElement("p");
   productDivNamePrice.appendChild(productPrice);
   productPrice.innerHTML = euro(cartData[product].price);
 
-  // DIV PARENT QUANTITE
+  // Div parent contenant la quantité, le prix total par produit et la supression du produit
 
   const productDivNumber = document.createElement("div");
   productSection.appendChild(productDivNumber);
   productDivNumber.classList.add("cart__item__content__settings");
 
-  // DIV ENFANT QUANTITE
+  // Div enfant contenant la quantité et le prix total par produit
 
   const productDivNumberChildren = document.createElement("div");
   productDivNumber.appendChild(productDivNumberChildren);
@@ -90,13 +102,13 @@ for (let product in cartData) {
     "cart__item__content__settings__quantity"
   );
 
-  // AFFICHAGE QUANTITE
+  // Affichage de la quantité par produit
 
   const productNumber = document.createElement("p");
   productDivNumberChildren.appendChild(productNumber);
   productNumber.innerHTML = "Quantité : ";
 
-  // SELECTION QUANTITE
+  // Séléction de la quantité par produit
 
   const productSelectNumber = document.createElement("input");
   productDivNumberChildren.appendChild(productSelectNumber);
@@ -108,13 +120,13 @@ for (let product in cartData) {
   productSelectNumber.max = "100";
   productSelectNumber.value = cartData[product].quantity;
 
-  // QUAND LA QUANTITE CHANGE ON APELLE LA FONCTION modifyQuantity
+  // Quand la quantité change on apelle la fonction modifyQuantity
 
   productSelectNumber.addEventListener("change", () => {
     modifyQuantity();
   });
 
-  // FONCTION MODIFICATION QUANTITE
+  // Fonction qui permet de modifier la quantité 
 
   const modifyQuantity = () => {
     if (productSelectNumber.value == 0) {
@@ -137,13 +149,13 @@ for (let product in cartData) {
       "Total: " + quantityTotal + " articles " + euro(priceTotal);
   };
 
-  // DIV SUPPRESSION QUANTITE
+  // Div qui contient l'option supprimer le produit
 
   const productDivDelete = document.createElement("div");
   productDivNumber.appendChild(productDivDelete);
   productDivDelete.classList.add("cart__item__content__settings__delete");
 
-  // SUPRESSION PRODUIT
+  // Supression du produit
 
   const productDelete = document.createElement("p");
   productDivDelete.appendChild(productDelete);
@@ -156,7 +168,7 @@ for (let product in cartData) {
     window.location.href = "cart.html";
   });
 
-  // TOTAL PAR PRODUIT
+  // Total par produit
 
   const quantityBlock = document.createElement("div");
   productDivNumberChildren.appendChild(quantityBlock);
@@ -170,14 +182,11 @@ for (let product in cartData) {
     cartData[product].quantity * cartData[product].price
   );
   totalPerProduct.style.fontSize = "18px";
-
-  // TOTAL QUANTITE ET PRIX
-
   quantityTotal += cartData[product].quantity;
   priceTotal += cartData[product].price * cartData[product].quantity;
 }
 
-// TOTAL
+// Div total
 
 const productDivTotal = document.createElement("div");
 productDivTotal.classList.add("cart__price");
@@ -187,7 +196,8 @@ productDivTotal.style.justifyContent = "space-between";
 productDivTotal.style.flexDirection = "row-reverse";
 productSection.appendChild(productDivTotal);
 
-// AFFICHAGE TOTAL
+// Affichage du total
+
 const cartTotal = document.createElement("p");
 productDivTotal.appendChild(cartTotal);
 let cartTotalSpan = document.createElement("span");
@@ -198,7 +208,7 @@ cartTotal.appendChild(cartTotalSpanB);
 cartTotal.innerHTML =
   "Total: " + quantityTotal + " articles " + euro(priceTotal);
 
-// VIDER LE PANIER
+// Bouton vider le panier
 
 const clearCart = document.createElement("button");
 productDivTotal.appendChild(clearCart);
@@ -219,7 +229,7 @@ clearCart.addEventListener("click", () => {
   window.location.href = "cart.html";
 });
 
-// RECUPERATION DES CHAMPS DE FORMULAIRES ET DES MESSAGES D'ERREUR
+// Récupération des champs de formulaires et des messages liés
 
 const inputFirstName = document.getElementById("firstName");
 const messageFirstName = document.getElementById("firstNameErrorMsg");
@@ -232,14 +242,14 @@ const messageCity = document.getElementById("cityErrorMsg");
 const inputEmail = document.getElementById("email");
 const messageEmail = document.getElementById("emailErrorMsg");
 
-// REG EXP LETTER
+// Reg exp pour les champs prénom, nom et ville
 
 const rejexLetter = new RegExp(
   "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð'-]+$",
   "u"
 );
 
-// VALIDATION DU CHAMP PRENOM
+// Validation du champ prénom
 
 inputFirstName.addEventListener("change", () => {
   validFirstName(this);
@@ -256,7 +266,7 @@ const validFirstName = () => {
     messageFirstName.innerHTML = "Prénom invalide";
   }
 };
-// VALIDATION DU CHAMP NOM
+// Validation du champ nom
 
 inputLastName.addEventListener("change", () => {
   validLastName();
@@ -274,7 +284,7 @@ const validLastName = () => {
   }
 };
 
-// VALIDATION DU CHAMP VILLE
+// Validation du champ ville
 
 inputCity.addEventListener("change", () => {
   validCity();
@@ -290,7 +300,7 @@ const validCity = () => {
   }
 };
 
-// VALIDATION CHAMP ADRESSE
+// Validation du champ adresse
 
 inputAddress.addEventListener("change", () => {
   validAdress();
@@ -308,7 +318,7 @@ const validAdress = () => {
   }
 };
 
-// VALIDATION CHAMP EMAIL
+// Validation du champ email
 
 inputEmail.addEventListener("change", () => {
   validEmail();
@@ -330,7 +340,7 @@ const validEmail = () => {
   }
 };
 
-// FONCTION submit, SOUMISSION DU FORMULAIRE SI TOUT LES CHAMPS SONT CORRECT
+// Fonction submit permettant la soumission du formulaire si tout les champs sont correct
 
 const orderForm = document.getElementById("order");
 orderForm.addEventListener("submit", (event) => {
@@ -389,12 +399,11 @@ const submit = (event) => {
   }
 };
 
-// CONDTIONS POUR NETTOYER LE LOCAL STORAGE LORSQUE L'ON VIDE LE PANIER
-// AFFICHER VOTRE PANIER EST VIDE ET CACHER LES ELEMENTS NON NECCESSAIRES
+// Si le panier est vide on cache le formulaire et la section panier puis on affiche votre panier est vide
 
 if (cartData == null || cartData.length == 0) {
   localStorage.removeItem("cart");
   form[0].style.display = "none";
-  title.innerHTML = "Votre panier est vide";
   cartSection[0].style.display = "none";
+  title.innerHTML = "Votre panier est vide";
 }

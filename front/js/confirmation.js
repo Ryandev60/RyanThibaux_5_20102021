@@ -1,3 +1,5 @@
+// Récupération du numéro du commande dans l'URL de la page
+
 const str = document.location.href;
 const url = new URL(str);
 const searchParams = new URLSearchParams(url.search);
@@ -8,10 +10,13 @@ if (searchParams.has("orderid")) {
   firstName.innerHTML = localStorage.getItem("firstName");
   const total = document.getElementById("total");
   total.innerHTML = Intl.NumberFormat("fr-FR", {
-   style:"currency",
-   currency:"EUR"
+    style: "currency",
+    currency: "EUR",
   }).format(localStorage.getItem("total"));
   const orderId = document.getElementById("orderId");
   orderId.innerHTML = id;
+
+  // Nettoyage du local storage
+
   localStorage.clear();
-};
+}

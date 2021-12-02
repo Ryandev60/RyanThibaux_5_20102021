@@ -1,4 +1,4 @@
-// RECUPERATION DES DONNEES
+// Recuperation des données dans l'API
 
 fetch("http://localhost:3000/api/products")
   .then((response) => response.json())
@@ -7,47 +7,51 @@ fetch("http://localhost:3000/api/products")
   })
   .catch((error) => alert("Erreur : " + error));
 
-// AFFICHAGE DES PRODUITS
+// Fonction pour afficher les produits retourné par l'API
 
 function showProducts(products) {
+
+  // Vérification du tableau retourné par l'API
+  console.log("Liste des produits retournés par l'API :");
+  console.log(products);
   for (const product of products) {
-    // LIENS ARTICLE
+    // Liens des articles
 
     const productLink = document.createElement("a");
     productLink.href = "product.html?id=" + product._id;
     document.getElementById("items").appendChild(productLink);
 
-    // ARTICLE
+    // Article (Vignette)
 
     const productArticle = document.createElement("article");
     productLink.appendChild(productArticle);
 
-    // IMAGE
+    // Image du produit
 
     const productImg = document.createElement("img");
     productImg.src = product.imageUrl;
-    productImg.alt = product.name;
+    productImg.alt = product.altTxt;
     productArticle.appendChild(productImg);
 
-    // TITRE
+    // Titre du produit
 
     const productTitle = document.createElement("h3");
     productTitle.innerHTML = product.name;
     productArticle.appendChild(productTitle);
 
-    // DESCRIPTION
+    // Description du produit
 
     const productDescription = document.createElement("p");
     productArticle.appendChild(productDescription);
     productDescription.innerHTML = product.description;
 
-    // PRIX
+    // Prix du produit
 
     const productPrice = document.createElement("p");
     productArticle.appendChild(productPrice);
     productPrice.innerHTML = product.price + " €";
 
-    // BOUTTON
+    // Boutton voir l'article pour plus d'ergonomie
 
     const productButton = document.createElement("button");
     productArticle.appendChild(productButton);
