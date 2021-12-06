@@ -3,7 +3,6 @@
 let priceTotal = 0;
 let quantityTotal = 0;
 
-// VARIABLE QUI VA STOCKER LE CODE POUR CONVERTIR LE PRIX EN EURO
 // Varible qui va stocker le code pour convertir le prix en euro
 
 const productSection = document.getElementById("cart__items");
@@ -132,6 +131,7 @@ for (let product in cartData) {
     if (productSelectNumber.value == 0) {
       productSelectNumber.value = 1;
     }
+
     cartData[product].quantity = parseInt(productSelectNumber.value);
     localStorage.setItem("cart", JSON.stringify(cartData));
     totalPerProduct.innerHTML = euro(

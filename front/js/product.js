@@ -145,7 +145,7 @@ const addToCart = (product) => {
   }
 };
 
-// FONCTION POUR ENVOYER LES DONNEES DE cartData DANS productToAdd
+// Fonction pour envoyer productToAdd dans cartData
 
 const addProduct = (cartData, productToAdd) => {
   cartData.push(productToAdd);
